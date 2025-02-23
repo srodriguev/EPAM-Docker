@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: phpmyadmin-service
+    ports:
+      - "8080:80"
+    networks:
+      - dockercompose-frontend
+    depends_on:
+      mydb:
+        condition: service_healthy
+    environment:
+      - PMA_HOST=mydb
+      - PMA_PORT=3306
+
+  mydb:
+    build: ./mydb
+    container_name: mariadb-service
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=mydb
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    networks:
+      - dockercompose-frontend
+    volumes:
+      - mydb-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 15s
+      retries: 5
+
+networks:
+  dockercompose-frontend:
+
+volumes:
+  mydb-data:
