@@ -11,7 +11,8 @@ services:
     networks:
       - dockercompose-frontend
     depends_on:
-      - mydb
+      mydb:
+        condition: service_healthy
     environment:
       PMA_HOST: mydb
       PMA_PORT: 3306
@@ -28,7 +29,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
       interval: 10s
       timeout: 15s
       retries: 5
