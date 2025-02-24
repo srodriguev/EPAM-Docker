@@ -27,6 +27,11 @@ services:
       - dockercompose-frontend
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 10s
+      timeout: 15s
+      retries: 5
 
 
 volumes:
